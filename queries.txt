@@ -1,0 +1,20 @@
+-- Query #1
+SELECT
+	strftime('%Y', date) as year, 
+    min(open_value) as min_open_value, 
+    max(open_value) as max_open_value, 
+    round(avg(open_value), 4) as average_open_value 
+from Rates
+GROUP BY strftime('%Y', date)
+
+
+-- Query #2
+with
+	minimum as (select date, min(open_value) as min_value from Rates),
+	maximum as (select date, max(open_value) as max_value from Rates)
+SELECT 
+	minimum.date as date_of_minimum, 
+	maximum.date as date_of_maximum,
+    abs(julianday(maximum.date) - julianday(minimum.date)) as days_between,
+    maximum.max_value - minimum.min_value as difference
+from maximum, minimum
